@@ -5,6 +5,29 @@
 #include "GameFramework/Character.h"
 #include "TantrumnCharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "TantrumnCharacterBase.h"
+#include "TantrumnGameModeBase.h"
+
+static TAutoConsoleVariable<bool> CVarDisplayLaunchInputDelta(
+	TEXT("Tantrumn.Character.Debug.DisplayLaunchInputDelta"), false,
+	TEXT("Display Launch Input Input Delta"),
+	ECVF_Default);
+
+void ATantrumnPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	GameModeRef = Cast<ATantrumnGameModeBase>(GetWorld()->GetAuthGameMode());
+	if (HUDClass)
+	{
+		HUDWidget = CreateWidget(this, HUDClass);
+		if (HUDWidget)
+		{
+			HUDWidget->AddToViewPort();
+		}
+	}
+}
+
 
 void ATantrumnPlayerController::SetupInputComponent()
 {
@@ -19,16 +42,20 @@ void ATantrumnPlayerController::SetupInputComponent()
 		InputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Pressed, this, &ATantrumnPlayerController::RequestSprintStart);
 		InputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Pressed, this, &ATantrumnPlayerController::RequestSprintEnd);
 
+		InputComponent->BindAction(TEXT("PullObject"), EInputEvent::IE_Pressed, this, &ATantrumnPlayerController::RequestPullObject);
+		InputComponent->BindAction(TEXT("PullObject"), EInputEvent::IE_Pressed, this, &ATantrumnPlayerController::RequestStopPullObject);
 
 		InputComponent->BindAxis(TEXT("MoveForward"), this, &ATantrumnPlayerController::RequestMoveForward);
 		InputComponent->BindAxis(TEXT("MoveRight"), this, &ATantrumnPlayerController::RequestMoveRight);
 		InputComponent->BindAxis(TEXT("LookUp"), this, &ATantrumnPlayerController::RequestLookUp);
 		InputComponent->BindAxis(TEXT("LookRight"), this, &ATantrumnPlayerController::RequestLookRight);
+		InputComponent->BindAxis(TEXT("ThrowObjectGP"), this, &ATantrumnPlayerController::RequestThrowObject);
 	}
 }
 
 void ATantrumnPlayerController::RequestMoveForward(float AxisValue)
 {
+	if(!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing)
 	if (AxisValue != 0.f)
 	{
 		FRotator const ControlSpaceRot = GetControlRotation();
@@ -53,6 +80,36 @@ void ATantrumnPlayerController::RequestLookUp(float AxisValue)
 void ATantrumnPlayerController::RequestLookRight(float AxisValue)
 {
 	AddYawInput(AxisValue * BaseLookRightRate * GetWorld()->GetDeltaSeconds());
+}
+
+void ATantrumnPlayerController::RequestThrowObject(float AxisValue)
+{
+	if (ATantrumnCharacterBase* TantrumnCharacterBase = Cast<ATantrumnCharacterBase>(GetCharacter()))
+	{
+		if (TantrumnCharacterBase->CanThrowObject())
+		{
+			float currentDelta = AxisValue - LastAxis;
+
+			//debug
+			if (CVarDisplayLaunchInputDelta->GetBool())
+			{
+				if (fabs(currentDelta) > 0.0f)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Axis: %f LastAxis: %f currentDelta: %f"), AxisValue, LastAxis);
+				}
+			}
+			LastAxis = AxisValue;
+			const bool IsFlick = fabs(currentDelta) > FlickThreshold;
+			if (IsFlick)
+			{
+				TantrumnCharacterBase->RequestThrowObject();
+			}
+		}
+		else
+		{
+			LastAxis = 0.0f;
+		}
+	}
 }
 
 void ATantrumnPlayerController::RequestJump()
