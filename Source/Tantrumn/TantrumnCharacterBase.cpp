@@ -9,14 +9,14 @@
 #include "ThrowableActor.h"
 
 #include "DrawDebugHelpers.h"
-using namespace AThrowableActor;
+//using namespace AThrowableActor;
 
 constexpr int CVSphereCastPlayerView = 0;
 constexpr int CVSphereCastActorTransform = 1;
 constexpr int CVSphereLineCastActorTransform = 2;
 
 
-static TAutoConsoleVariable<int> CVarTraceMode(
+/*static TAutoConsoleVariable<int> CVarTraceMode(
 	TEXT("Tantrumn.Character.Debug.TraceMode"),
 	0,
 	TEXT("	  0: Sphere cast PlayerView is used for direction/rotation (default).\n")
@@ -35,7 +35,7 @@ static TAutoConsoleVariable<bool> CVarTraceMode(
 	TEXT("Tantrumn.Character.Debug.DisplayThrowVelocity"),
 	false,
 	TEXT("Display ThrowVelocity"),
-	ECVF_Default);
+	ECVF_Default);*/
 
 // Sets default values
 ATantrumnCharacterBase::ATantrumnCharacterBase()
@@ -79,12 +79,12 @@ void ATantrumnCharacterBase::Tick(float DeltaTime)
 	}
 	else if (CharacterThrowState == ECharacterThrowState::None || CharacterThrowState == ECharacterThrowState::RequestingPull)
 	{
-		switch (CVarTraceMode->GetInt())
+		/*switch (CVarTraceMode->GetInt())
 		{
 		case CVSphereCastPlayerView:
 			SphereCastPlayerView();
 			break;
-		}
+		}*/
 	}
 }
 
@@ -218,15 +218,15 @@ void ATantrumnCharacterBase::SphereCastPlayerView()
 
 	
 	FHitResult HitResult;
-	EDrawDebugTrace::Type DebugTrace = CVarDisplayTrace->GetBool() ? EDrawDebugTrace::ForOneFrame : EDrawDebugTrace::None;
+	//EDrawDebugTrace::Type DebugTrace = CVarDisplayTrace->GetBool() ? EDrawDebugTrace::ForOneFrame : EDrawDebugTrace::None;
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(this);
 
-	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Location, EndPos, 70.0f, UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_Visibility), );
+	//UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Location, EndPos, 70.0f, UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_Visibility), );
 	ProcessTraceResult(HitResult);
 
 #if ENABLE_DRAW_DEBUG
-	if (CVarDisplayTrace->GetBool())
+	//if (CVarDisplayTrace->GetBool())
 	{
 		static float FovDeg = 90.0f;
 		DrawDebugCamera(GetWorld(), Location, Rotation, FovDeg);
@@ -242,9 +242,9 @@ void ATantrumnCharacterBase::SphereCastActorTransform()
 	FVector StartPos = GetActorLocation();
 	FVector EndPos = StartPos + (GetActorForwardVector() * 1000.0f);
 
-	EDrawDebugTrace::Type DebugTrace = CVarDisplayTrace->GetBool() ? EDrawDebugTrace::ForOneFrame : EDrawDebugTrace::None;
+	//EDrawDebugTrace::Type DebugTrace = CVarDisplayTrace->GetBool() ? EDrawDebugTrace::ForOneFrame : EDrawDebugTrace::None;
 	FHitResult HitResult;
-	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), StartPos, EndPos, 70.0f, UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_Visibility), );
+	//UKismetSystemLibrary::SphereTraceSingle(GetWorld(), StartPos, EndPos, 70.0f, UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_Visibility), );
 	ProcessTraceResult(HitResult);
 }
 
@@ -256,7 +256,7 @@ void ATantrumnCharacterBase::LineCastActorTransform()
 	FHitResult HitResult;
 	GetWorld() ? GetWorld()->LineTraceSingleByChannel(HitResult, StartPos, EndPos, ECollisionChannel::ECC_Visibility) : false;
 	#if ENABLE_DRAW_DEBUG
-		if (CVarDisplayTrace->GetBool())
+		//if (CVarDisplayTrace->GetBool())
 		{
 			DrawDebugLine(GetWorld(), StartPos, EndPos, HitResult.bBlockingHit ? FColor::Red : FColor::White, false);
 		}
@@ -284,7 +284,7 @@ void ATantrumnCharacterBase::ProcessTraceResult(const FHitResult& HitResult)
 		if (!ThrowableActor)
 		{
 			ThrowableActor = HitThrowableActor;
-			ThrowableActor = ToggleHighlight(true);
+			//ThrowableActor = ToggleHighlight(true);
 		}
 	}
 
@@ -316,8 +316,8 @@ bool ATantrumnCharacterBase::PlayThrowMontage()
 		}
 		AnimInstance->Montage_SetBlendingOutDelegate(BlendingOutDelegate, ThrowMontage);
 
-		AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &ATantrumnCharacterBase::OnNotifyBeginRecieved);
-		AnimInstance->OnPlayMontageNotifyEnd.AddDynamic(this, &ATantrumnCharacterBase::OnNotifyBeginRecieved);
+		//AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &ATantrumnCharacterBase::OnNotifyBeginRecieved);
+		//AnimInstance->OnPlayMontageNotifyEnd.AddDynamic(this, &ATantrumnCharacterBase::OnNotifyBeginRecieved);
 
 	}
 
@@ -328,8 +328,8 @@ void ATantrumnCharacterBase::UnbindMontage()
 {
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
-		AnimInstance->OnPlayMontageNotifyBegin.RemoveDynamic(this, &ATantrumnCharacterBase::OnNotifyBeginRecieved);
-		AnimInstance->OnPlayMontageNotifyEnd.AddDynamic(this, &ATantrumnCharacterBase::OnNotifyBeginRecieved);
+		//AnimInstance->OnPlayMontageNotifyBegin.RemoveDynamic(this, &ATantrumnCharacterBase::OnNotifyBeginRecieved);
+		//AnimInstance->OnPlayMontageNotifyEnd.AddDynamic(this, &ATantrumnCharacterBase::OnNotifyBeginRecieved);
 	}
 }
 
@@ -343,14 +343,14 @@ void ATantrumnCharacterBase::OnMontageEnded(UAnimMontage* Montage, bool bInterru
 	UnbindMontage();
 	CharacterThrowState = ECharacterThrowState::None;
 	MoveIgnoreActorRemove(ThrowableActor),
-	if (ThrowableActor->GetRootComponent())
+	/*if (ThrowableActor->GetRootComponent())
 	{
 		UPrimitiveComponent* RootPrimitiveComponent = Cast<UPrimitiveComponent>(ThrowableActor->GetRootComponent());
 		if (RootPrimitiveComponent)
 		{
 			RootPrimitiveComponent->IgnoreActorWhenMoving(this, false);
 		}
-	}
+	}*/
 	ThrowableActor = nullptr;
 }
 
@@ -367,7 +367,7 @@ void ATantrumnCharacterBase::OnNotifyBeginReceived(FName NotifyName, const FBran
 	const FVector& Direction = GetActorForwardVector() * ThrowSpeed;
 	ThrowableActor->Launch(Direction);
 
-	if (CVarDisplayThrowVelocity->GetBool())
+	//if (CVarDisplayThrowVelocity->GetBool())
 	{
 		const FVector& Start = GetMesh()->GetSocketLocation(TEXT("ObjectAttach"));
 		DrawDebugLine(GetWorld(), Start, Start + Direction, FColor::Red, false, 5.0f);

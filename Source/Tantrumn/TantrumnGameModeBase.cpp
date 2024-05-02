@@ -2,6 +2,7 @@
 
 
 #include "TantrumnGameModeBase.h"
+#include "TantrumnGameWidget.h"
 
 ATantrumnGameModeBase::ATantrumnGameModeBase()
 {
@@ -26,26 +27,26 @@ void ATantrumnGameModeBase::PlayerReachedEnd()
 {
 	CurrentGameState = EGameState::GameOver;
 	
-	GameWidget->LevelComplete();
+	//GameWidget->LevelComplete();
 	FInputModeUIOnly InputMode;
-	PC->SetInputMode(InputMode);
-	PC->SetShowMouseCursor(true);
+	//PC->SetInputMode(InputMode);
+	//PC->SetShowMouseCursor(true);
 	
 }
 
 void ATantrumnGameModeBase::DisplayCountdown()
 {
-	if (!GameWidgetClass) { Return; }
+	//if (!GameWidgetClass) { Return; }
 
-	PC = UGamePlayStatics::GetPlayerController(GetWorld(), 0);
-	GameWidget->AddToViewport();
-	GameWidget->StartCountdown(GameCountdownDuration, this);
+	//PC = UGamePlayStatics::GetPlayerController(GetWorld(), 0);
+	//GameWidget->AddToViewport();
+	//GameWidget->StartCountdown(GameCountdownDuration, this);
 }
 
 void ATantrumnGameModeBase::StartGame()
 {
 	CurrentGameState = EGameState::Playing;
 	FInputModeGameOnly InputMode;
-	PC->SetInputMode(InputMode);
-	PC->SetShowMouseCursor(false);
+	//PC->SetInputMode(InputMode);
+	//PC->SetShowMouseCursor(false);
 }

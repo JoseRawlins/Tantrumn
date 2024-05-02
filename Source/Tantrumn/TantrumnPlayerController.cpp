@@ -20,10 +20,10 @@ void ATantrumnPlayerController::BeginPlay()
 	GameModeRef = Cast<ATantrumnGameModeBase>(GetWorld()->GetAuthGameMode());
 	if (HUDClass)
 	{
-		HUDWidget = CreateWidget(this, HUDClass);
+		//HUDWidget = CreateWidget(this, HUDClass);
 		if (HUDWidget)
 		{
-			HUDWidget->AddToViewPort();
+			//HUDWidget->AddToViewPort();
 		}
 	}
 }

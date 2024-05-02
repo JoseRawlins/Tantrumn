@@ -7,6 +7,7 @@
 #include "Sound/SoundCue.h"
 #include "TantrumnCharacterBase.generated.h"
 
+
 class AThrowableActor;
 
 UENUM(BlueprintType)
@@ -49,7 +50,7 @@ public:
 	bool CanThrowObject() const { return CharacterThrowState == ECharacterThrowState::Attached; }
 
 	UFUNCTION(BlueprintPure)
-	bool IsPullingObject() const { return CharacterThrowState == ECharacterThrowState::RequestingPull || CharacterThrowState == ECharacterThrowState:: }
+	bool IsPullingObject() const { return CharacterThrowState == ECharacterThrowState::RequestingPull || CharacterThrowState == ECharacterThrowState::Pulling; }
 
 	UFUNCTION(BlueprintPure)
 	ECharacterThrowState GetCharacterThrowState() const { return CharacterThrowState; }
@@ -69,16 +70,16 @@ protected:
 	bool PlayThrowMontage();
 	void UnbindMontage();
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION()
 	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION()
 	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION()
 	void OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 	
-	UFUNCTION(BlueprintPure)
+	UFUNCTION()
 	void OnNotifyEndReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 
 	void OnStunBegin(float StunRatio);
@@ -120,7 +121,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Throw")
 	ECharacterThrowState CharacterThrowState = ECharacterThrowState::None;
 
-	UPROPERTY(VisibleAnywhere, Category = "Throw", meta = (ClampMin = "0.0f", Unit = "ms"))
+	UPROPERTY(VisibleAnywhere, Category = "Throw", meta = (ClampMin = "0", Unit = "ms"))
 	float ThrowSpeed = 2000.0f; 
 
 	UPROPERTY(EditAnywhere, Category = "Animation")

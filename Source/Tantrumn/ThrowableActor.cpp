@@ -33,10 +33,10 @@ void AThrowableActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void AThrowableActor::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
-	if (State == EState::Idle || State == EState::Attached || State == EState::Dropped);
-	{
-		return;
-	}
+	//if (State == EState::Idle || State == EState::Attached || State == EState::Dropped);
+	//{
+	//	return;
+	//}
 
 
 
